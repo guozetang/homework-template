@@ -1,0 +1,75 @@
+
+\begin{homeworkProblem}
+% \textbf{2-1. Property Testing.} Please do problem 15 (chapter 2). As a hint, the bounds on $(1 + x)^y$ on page 47 may end up being useful.
+
+\textbf{Analyze}
+
+This algorithm always provides us with the correct output if the input array is sorted. So, we only need to consider the second situation (The array is "far" from sorted): the input array is unsorted, but we return an incorrect result. We only make the mistake when we choose a consistent element on each of the longest increasing sub-sequence, then we will get the incorrect output. And the algorithm runs binary searches to test consistency of $O(\frac{1}{\varepsilon}\log n)$, and its total running time is $O(\frac{1}{\varepsilon}\log^2n)$.  There are some definitions in this problem. 
+
+\textbf{Definitions}
+
+\begin{enumerate}
+    \item The longest increasing sub-sequence length is $< (1-\varepsilon)n$
+    \item The probability of randomly choosing one of the increasing sub-sequence is $ 1 - \varepsilon$
+    \item If we make the mistake when we only choose a consistent element is $O(\frac{1}{\varepsilon}\log n)$
+\end{enumerate}
+Base on these definitions,  we use $P(failure)$ as the probability for when we make a mistake. Then we can get the followed formula.
+\[
+    \begin{split}
+        P(failure) &\leq (1-\varepsilon)^{k}
+    \end{split}
+\]
+
+From the page 47 of the textbook draft, we can use the result about $(1 + x)^y \leq e^{xy} $ to deal with the above result. We can change this formula to $(1 - x)^y \leq e^{-xy}$. And, we define the $k = \frac{m}{\varepsilon}\ln (n)$. Then use these definitions, we can get the followed formula.
+\[
+    \begin{split}
+        P(failure) &\leq (1-\varepsilon)^{\frac{m}{\varepsilon}\ln (n)}
+        \\
+        &\leq e^{-\varepsilon * \frac{m}{\varepsilon}\ln (n)}
+        \\
+        &= e^{-m ln (n)} \\
+        &= \frac{1}{n^m}
+    \end{split}
+\]
+
+Now, we can change the $m$ to make the $ P(failure)$ is very low. As a result, we can get a high probability of success by change the m value.
+\end{homeworkProblem}
+
+\begin{homeworkProblem}
+% \textbf{2-2. A Priority Queue Built from Sorted Arrays}. Please do problem 93 (chapter 5)
+
+\textbf{Requirements}
+    \begin{enumerate}
+        \item Prove both $insert$ and $remove$-$min$ run in only $O(\log n)$ amortized time.
+        \item Is it possible to implement the remaining priority queue operations $decrease$-$key$, $increase$-$key$, and $delete$ in $O(\log n)$ amortized time?
+    \end{enumerate}
+
+
+\textbf{Definitions}
+    \begin{enumerate}
+        \item Array $A_1$ and $A_2$ are two arrays in all the arrays which need to merge.
+        \item $length(A_1)$ is the length for $A_1$ and $length(A_2)$ is the length for $A_2$. $length(A_1)\leq length(A_2)$, but $2*length(A_1) \geq length(A_2)$;
+        \item $C_i$ is the number of the arrays which are longer than the array which contain the this element i. 
+        \item The number of all the arrays  is $\leq \log_2n$, n is the number of elements in this structure.
+    \end{enumerate}
+
+\textbf{Accounting Method:} When we want to insert a new element $i$, each inserts operation create a single array firstly, this costs us \$1. In addition, we have to store another \$$3C_i \leq 3\log_2 n = \log n * \log_2n = O(\log n)$ in the bank. This saving will be used for merging arrays for this element in the future. For example, when we merge two arrays $A_1$ and $A_2$ and $length(A_1)\leq length(A_2)$. For each elements in the $A_1$, we need to decrease with the \$3 associated with each element in the array $A_1$. So this merge cost is \$$3* length(A_1)$. We use this cost to pay for the merging cost $length(A_1) + length(A_2) \leq 3*length(A_1)$. And the total insert operation cost is  \$$3* length(A_1) + 1$. The element $i$ in the $A_1$ or $A_2$ have a new $C_i - 1$ which is less than $C_i$. As a result, when we insert an element, we need to spend \$1 for new this single array, and add extract \$$3(\log_2 n)$ credit for it. So, the \textit{insert} operation run in only $O(\log n)$ amortized time.
+\\
+
+\textbf{For the \textit{remove-min} operation}, in $O(\log n)$ time to find the root \textit{x} with the minimum value. After we delete this element, we use the surplus credit for this element to pay for the merging cost.
+We didn't need to do anything because the saving for the element $i$ which when wants to delete has credit \$$3C_i$ which is enough for remove. This entire process took only $O(\log n)$ time.
+\\
+
+To implement the remaining priority queue operations $decrease$-$key$, $increase$-$key$, and \textit{delete} operation. For all of them, we need to spend $(O(\log n))$ time to find them first. \textbf{For the \textit{decrease-key(A, x, k)}}, since the length for an array is $O(log n)$, this takes a most  $O(log n)$ because we use this element new value $k$ to compare with its parent and, if it's smaller, it is swapped upwards. \textbf{For the \textit{increase-key(A, x, k)}}, this process is similar with the \textit{decrease-key(A, x, k)}. We use this element new value $k$ to compare with its children and, if it's bigger, it is swapped downwards. As a result, both \textit{decrease-key} and \textit{increase-key} run in only $O(\log n)$ amortized time. \textbf{For the \textit{delete} operation}, we can do the lazy deletion in the algorithm. When an element is deleted, we just need to mark it as $deleted$ but we didn't really delete it at that time. We clean it when it moves to the front of an array and when someone calls the \textit{remove-min} function. So, we need to add $O(\log n)$ credit to that element when we marked $deleted$ flag on that element. We spend this cost for the \textit{remove-min} operation. However, how can we deal with if the delete element is the root element in a array? In this case, we can add a point for each element in the array which is used to point to the root element in this array. We change this point if we delete the root element in this array. We may need another $O(\log n)$) time to do this.\\
+
+So, the entire process for \textit{insert}, \textit{remove-min}, \textit{decrease-key}, \textit{increase-key} and \textit{delete} took only $O(\log n)$ amortized time.
+
+\end{homeworkProblem}
+
+\pagebreak
+\textbf{References}
+
+\begin{enumerate}
+    \item http://moais.imag.fr/membres/marc.tchiboukdjian/mosig/amortized.pdf
+    \item http://home.cse.ust.hk/~golin/COMP572/Notes/Heaps.pdf
+\end{enumerate}

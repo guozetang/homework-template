@@ -86,12 +86,12 @@
 %   - Author
 %
 
-\newcommand{\hmwkTitle}{Homework\ \#2}
-\newcommand{\hmwkDueDate}{February 12, 2014}
-\newcommand{\hmwkClass}{Calculus}
-\newcommand{\hmwkClassTime}{Section A}
-\newcommand{\hmwkClassInstructor}{Professor Isaac Newton}
-\newcommand{\hmwkAuthorName}{\textbf{Josh Davis} \and \textbf{Davis Josh}}
+\newcommand{\hmwkTitle}{Homework\ \#1}
+\newcommand{\hmwkDueDate}{Jan. 24, 2019}
+\newcommand{\hmwkClass}{CPSC8400}
+\newcommand{\hmwkClassTime}{}
+\newcommand{\hmwkClassInstructor}{Professor Dr.Brian Dean}
+\newcommand{\hmwkAuthorName}{\textbf{Guoze Tang}}
 
 %
 % Title Page
@@ -100,7 +100,7 @@
 \title{
     \vspace{2in}
     \textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
-    \normalsize\vspace{0.1in}\small{Due\ on\ \hmwkDueDate\ at 3:10pm}\\
+    \normalsize\vspace{0.1in}\small{Due\ on\ \hmwkDueDate\ at 12:25pm}\\
     \vspace{0.1in}\large{\textit{\hmwkClassInstructor\ \hmwkClassTime}}
     \vspace{3in}
 }
@@ -142,15 +142,22 @@
 \pagebreak
 
 \begin{homeworkProblem}
-    Give an appropriate positive constant \(c\) such that \(f(n) \leq c \cdot
-    g(n)\) for all \(n > 1\).
+\textbf{Virtual Initialization}. One problem with arrays is that they must typically be initialized prior to use. On most computing environments, when we allocate an array of O(n) words of memory they start out filled with “garbage” values (whatever data last occupied that block of memory), and we must spend O(n) time setting the words in the block to some initial value. In this problem, we wish to design a data structure that behaves like an array (i.e., allowing us to retrieve the ith value and modify the ith value both in O(1) time), but which allows for initialization to a specified value v in O(1) time as well. That is, if we ask for the value of an element we have not modified since the last initialization, the result should be v. The data structure should occupy O(n) space in memory (note that this could be twice or three times as large as the actual space we need to store the elements of the array), and the data structure should function properly regardless of whatever garbage is initially present in this memory. As a hint, try to combine the best features of an array and a linked list.
+    % Give an appropriate positive constant \(c\) such that \(f(n) \leq c \cdot
+    % g(n)\) for all \(n > 1\).
 
+    % \begin{enumerate}
+    %     \item \(f(n) = n^2 + n + 1\), \(g(n) = 2n^3\)
+    %     \item \(f(n) = n\sqrt{n} + n^2\), \(g(n) = n^2\)
+    %     \item \(f(n) = n^2 - n + 1\), \(g(n) = n^2 / 2\)
+    % \end{enumerate}
+\textbf{Requirements}
     \begin{enumerate}
-        \item \(f(n) = n^2 + n + 1\), \(g(n) = 2n^3\)
-        \item \(f(n) = n\sqrt{n} + n^2\), \(g(n) = n^2\)
-        \item \(f(n) = n^2 - n + 1\), \(g(n) = n^2 / 2\)
+        \item Retrieve the ith valuse and modify the ith value both in O(1) time
+        \item Initialization to a specified value v in O(1) time
+        \item Space: O(n), can twice or three times as large as the actual space we need.
+        \item The data structure should function properly regardless of whatever garbage is initially present in the memory.
     \end{enumerate}
-
     \textbf{Solution}
 
     We solve each solution algebraically to determine a possible constant
@@ -214,13 +221,35 @@
 \pagebreak
 
 \begin{homeworkProblem}
-    Let \(\Sigma = \{0, 1\}\). Construct a DFA \(A\) that recognizes the
-    language that consists of all binary numbers that can be divided by 5.
-    \\
+\textbf{Enumerating Subsets by Incrementing a Binary Counter}. This is a somewhat classical amortized analysis problem. Suppose we store the digits of an n-bit binary number B in an array A of length n. We wish to increment B from 0 to $2^n - 1$ while continually modifying the contents of A to reflect the digits in B. For example, if n = 3, then we will start with $A = (0, 0, 0)$, then we toggle the last entry to obtain A = (0, 0, 1). The next increment operation changes A to A = (0, 1, 0), and so on, until we finally reach A = (1, 1, 1). Please describe how to implement the operation increment that takes an array A and modifies it by incrementing its associated binary number. Although your operation will require $\theta(n)$ time in the worst case, please show that its amortized running time is only $O(1)$ (assuming the entries in A all start out at zero). Please show how to use the accounting method as well as a potential function to perform this amortized analysis.
 
-    Let the state \(q_k\) indicate the remainder of \(k\) divided by 5. For
-    example, the remainder of 2 would correlate to state \(q_2\) because \(7
-    \mod 5 = 2\).
+\textbf{Solution}
+
+We store the digits of an n-bit binary number B to count the incrementing and store this number to an array A of length n.
+
+If we plan to $0 ~ m$ increments. For the last position A[n]:
+
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|} %l(left)居左显示 r(right)居右显示 c居中显示
+\hline 
+Incrementing(op\#) & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8\\
+\hline 
+A & (0) & (1) &(1,0) & (1,1) & (1,0,0) & (1,0,1) & (1,1,0) & (1,1,1) &(1,0,0,0)\\
+Flipped Number & 0 & 1 & 2 & 1 & 3 & 1 & 2 & 1 & 4 \\
+Cumulative & 0 & 1 & 3 & 4 & 7 & 8 & 10 & 11 & 15 \\
+Total & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 & 2 \\
+New Cumulative  & 2 & 4 & 6 & 8 & 10 & 12 & 14 & 16 & 18\\
+
+\hline 
+\end{tabular}
+
+
+    \begin{enumerate}
+        \item Retrieve the ith valuse and modify the ith value both in O(1) time
+        \item Initialization to a specified value v in O(1) time
+        \item Space: O(n), can twice or three times as large as the actual space we need.
+        \item The data structure should function properly regardless of whatever garbage is initially present in the memory.
+    \end{enumerate}
 
     \begin{figure}[h]
         \centering
@@ -285,7 +314,11 @@
 \end{homeworkProblem}
 
 \begin{homeworkProblem}
-    Write part of \alg{Quick-Sort($list, start, end$)}
+\textbf{Enumerating Permutations.} Consider a length-n array A = (1, 2, 3, . . . , n). We would like to step through all n! permutations of A, updating the array as we go to represent each subsequent permutation. Permutations should be generated in lexicographic order; for example, with n = 3 we start with A = (1, 2, 3), then move to A = (1, 3, 2), A = (2, 1, 3), A = (2, 3, 1), A = (3, 1, 2),
+and finally A = (3, 2, 1). Please describe how to implement an operation next-perm with O(1)
+amortized running time that modifies A to produce the next permutation in lexicographic order.
+Use a potential function in your analysis.
+    % Write part of \alg{Quick-Sort($list, start, end$)}
 
     \begin{algorithm}[]
         \begin{algorithmic}[1]
@@ -305,10 +338,12 @@
 \pagebreak
 
 \begin{homeworkProblem}
-    Suppose we would like to fit a straight line through the origin, i.e.,
-    \(Y_i = \beta_1 x_i + e_i\) with \(i = 1, \ldots, n\), \(\E [e_i] = 0\),
-    and \(\Var [e_i] = \sigma^2_e\) and \(\Cov[e_i, e_j] = 0, \forall i \neq
-    j\).
+\textbf{In-Place Matrix Transposition.} Suppose we store an $m*n$ matrix in row-major form as an array of length $N = m*n$ in which we list the elements of the matrix one row at a time from left to right. By taking the transpose of such a matrix, we convert it into column-major form - an array of length N listing the columns of the matrix one at a time, each one from top to bottom. Suppose the matrix is sufficiently large that we would like to permute its memory representation from row-major to column-major order in place (using only $O(1)$ extra storage beyond the memory that holds the matrix). Please describe and analyze an $O(N log N )$ algorithm for solving this problem. As a hint, try to design an approach modeled on the “domination radius” algorithm from
+lecture, noting that for each element in the matrix, you can easily determine the location to which it needs to move, as well as the location of the element that will replace it.
+    % Suppose we would like to fit a straight line through the origin, i.e.,
+    % \(Y_i = \beta_1 x_i + e_i\) with \(i = 1, \ldots, n\), \(\E [e_i] = 0\),
+    % and \(\Var [e_i] = \sigma^2_e\) and \(\Cov[e_i, e_j] = 0, \forall i \neq
+    % j\).
     \\
 
     \part
